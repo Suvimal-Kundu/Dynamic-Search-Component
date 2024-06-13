@@ -5,7 +5,7 @@ A Salesforce Admin from Customer end should be able to Configure the behavior of
 As a recommendation consider the following parameters that the Lightning component can dynamically assign at runtime.
 
 1. “Base object” – Stores the Object value under scope for one component.
-2. 2. “Search fields” – Stores the Comma Separate API Names of fields on Base Object to be used for search.
+2. “Search fields” – Stores the Comma Separate API Names of fields on Base Object to be used for search.
 3. “Search results” - Stores the Comma Separate API Names of fields on Base Object and related Objects that can be part of Search results.
 
 Lightning component should be able to support but not limited to following inputs.
