@@ -1,0 +1,38 @@
+public class DynamicSearchController {
+    @AuraEnabled(cacheable=true)
+    public static List<Map<String, Object>> searchRecords(String baseObject, String searchFields, String searchResults, String searchCriteria) {
+        String query = 'SELECT Id, ' + searchResults + ' FROM ' + baseObject + ' WHERE ';
+        String[] searchFieldArray = searchFields.split(',');
+        List<String> whereClauses = new List<String>();
+
+        for (String field : searchFieldArray) {
+            whereClauses.add(field.trim() + ' LIKE \'%' + searchCriteria + '%\'');
+        }
+
+        query += String.join(whereClauses, ' OR ');
+
+        List<sObject> results = Database.query(query);
+        List<Map<String, Object>> resultList = new List<Map<String, Object>>();
+
+        for (sObject record : results) {
+            Map<String, Object> resultMap = new Map<String, Object>();
+            for (String field : searchResults.split(',')) {
+                if (field.contains('.')) {
+                    List<String> fieldParts = field.split('\\.');
+                    if (fieldParts.size() == 2) {
+                        resultMap.put(field, record.getSObject(fieldParts[0]).get(fieldParts[1]));
+                    }
+                } else {
+                    resultMap.put(field, record.get(field));
+                }
+            }
+            resultMap.put('Id', record.get('Id'));
+            if (searchResults.contains('Account.Name')) {
+                resultMap.put('AccountId', record.getSObject('Account') != null ? record.getSObject('Account').get('Id') : null);
+            }
+            resultList.add(resultMap);
+        }
+
+        return resultList;
+    }
+}

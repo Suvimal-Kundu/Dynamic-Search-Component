@@ -1,0 +1,85 @@
+@IsTest
+public class DynamicSearchControllerTest {
+    
+    @TestSetup
+    static void setupTestData() {
+        // Create test data for Contacts and Accounts
+        Account account1 = new Account(Name = 'Test Account 1');
+        insert account1;
+        
+        Account account2 = new Account(Name = 'Test Account 2');
+        insert account2;
+
+        Contact contact1 = new Contact(FirstName = 'John', LastName = 'Doe', Email = 'john.doe@example.com', AccountId = account1.Id);
+        insert contact1;
+
+        Contact contact2 = new Contact(FirstName = 'Jane', LastName = 'Doe', Email = 'jane.doe@example.com', AccountId = account2.Id);
+        insert contact2;
+    }
+
+    @IsTest
+    static void testSearchRecordsContact() {
+        // Test searching for Contacts
+        String baseObject = 'Contact';
+        String searchFields = 'Account.Name,Email';
+        String searchResults = 'Name,MailingCity,MailingCountry,Account.Name';
+        String searchCriteria = 'Doe';
+        
+        Test.startTest();
+        List<Map<String, Object>> results = DynamicSearchController.searchRecords(baseObject, searchFields, searchResults, searchCriteria);
+        Test.stopTest();
+        
+        System.assertNotEquals(0, results.size(), 'Results should not be empty');
+        System.assert(results[0].containsKey('Name'), 'Results should contain Name field');
+        System.assert(results[0].containsKey('Account_Name'), 'Results should contain Account.Name field');
+    }
+
+    @IsTest
+    static void testSearchRecordsAccount() {
+        // Test searching for Accounts
+        String baseObject = 'Account';
+        String searchFields = 'Name,Owner.Name';
+        String searchResults = 'Name,AccountSource,Type';
+        String searchCriteria = 'Test';
+        
+        Test.startTest();
+        List<Map<String, Object>> results = DynamicSearchController.searchRecords(baseObject, searchFields, searchResults, searchCriteria);
+        Test.stopTest();
+        
+        System.assertNotEquals(0, results.size(), 'Results should not be empty');
+        System.assert(results[0].containsKey('Name'), 'Results should contain Name field');
+    }
+
+    @IsTest
+    static void testSearchRecordsNoResults() {
+        // Test searching for non-existing records
+        String baseObject = 'Contact';
+        String searchFields = 'Account.Name,Email';
+        String searchResults = 'Name,MailingCity,MailingCountry,Account.Name';
+        String searchCriteria = 'NonExistent';
+        
+        Test.startTest();
+        List<Map<String, Object>> results = DynamicSearchController.searchRecords(baseObject, searchFields, searchResults, searchCriteria);
+        Test.stopTest();
+        
+        System.assertEquals(0, results.size(), 'Results should be empty');
+    }
+
+    @IsTest
+    static void testSearchRecordsInvalidField() {
+        // Test searching with invalid field
+        String baseObject = 'Contact';
+        String searchFields = 'InvalidField';
+        String searchResults = 'Name,MailingCity,MailingCountry,Account.Name';
+        String searchCriteria = 'Doe';
+        
+        Test.startTest();
+        try {
+            List<Map<String, Object>> results = DynamicSearchController.searchRecords(baseObject, searchFields, searchResults, searchCriteria);
+            System.assert(false, 'Expected exception was not thrown');
+        } catch (Exception e) {
+            System.assert(e.getMessage().contains('No such column'), 'Expected no such column exception');
+        }
+        Test.stopTest();
+    }
+}
