@@ -1,0 +1,18 @@
+<template>
+    <lightning-card title="Dynamic Search Component" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <lightning-input label="Base Object" value={baseObject} onchange={handleInputChange} data-id="baseObject"></lightning-input>
+            <lightning-input label="Search Fields (Comma Separated)" value={searchFields} onchange={handleInputChange} data-id="searchFields"></lightning-input>
+            <lightning-input label="Search Results (Comma Separated)" value={searchResults} onchange={handleInputChange} data-id="searchResults"></lightning-input>
+            <lightning-input label="Search Criteria" value={searchCriteria} onchange={handleInputChange} data-id="searchCriteria"></lightning-input>
+            <lightning-button label="Search" onclick={handleSearch}></lightning-button>
+        </div>
+        <template if:true={results.length}>
+            <lightning-datatable
+                data={results}
+                columns={columns}
+                key-field="Id">
+            </lightning-datatable>
+        </template>
+    </lightning-card>
+</template>
