@@ -23,3 +23,7 @@ Search Result: name,AccountSource,Type
 
 # Attaching the UI 
 ![image](https://github.com/Suvimal-Kundu/Dynamic-Search-Component/assets/70266779/3834e2e1-3da2-4999-baa5-c161ce122d9f)
+
+# The apex test class coverage is 100%. Attached the evidence below.
+![image](https://github.com/Suvimal-Kundu/Dynamic-Search-Component/assets/70266779/2a4246d9-a77f-4c49-a257-4a309fbc8d3e)
+
